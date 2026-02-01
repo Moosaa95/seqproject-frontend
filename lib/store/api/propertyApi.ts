@@ -4,6 +4,10 @@ export interface ApiProperty {
     id: string;
     title: string;
     location: string;
+    location_data?: {
+        id: string;
+        name: string;
+    };
     price: string;
     currency: string;
     status: 'rent' | 'sale';

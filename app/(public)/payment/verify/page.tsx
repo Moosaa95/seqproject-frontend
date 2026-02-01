@@ -1,12 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { useVerifyPaymentQuery } from '@/lib/store/api/paymentApi';
 
-export default function PaymentVerifyPage() {
+function PaymentLoading() {
+  return (
+    <div className="min-h-screen pt-20 flex items-center justify-center bg-gray-50">
+      <div className="text-center">
+        <Loader2 className="h-16 w-16 animate-spin text-emerald-600 mx-auto mb-4" />
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Verifying Payment...</h2>
+        <p className="text-gray-600">Please wait while we confirm your payment</p>
+      </div>
+    </div>
+  );
+}
+
+function PaymentVerifyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const reference = searchParams.get('reference');
@@ -24,23 +36,8 @@ export default function PaymentVerifyPage() {
     }
   }, [reference, router]);
 
-  // Redirect to home if no reference
-  useEffect(() => {
-    if (!reference) {
-      router.push('/');
-    }
-  }, [reference, router]);
-
   if (loading) {
-    return (
-      <div className="min-h-screen pt-20 flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <Loader2 className="h-16 w-16 animate-spin text-emerald-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Verifying Payment...</h2>
-          <p className="text-gray-600">Please wait while we confirm your payment</p>
-        </div>
-      </div>
-    );
+    return <PaymentLoading />;
   }
 
   if (error) {
@@ -143,4 +140,12 @@ export default function PaymentVerifyPage() {
   }
 
   return null;
+}
+
+export default function PaymentVerifyPage() {
+  return (
+    <Suspense fallback={<PaymentLoading />}>
+      <PaymentVerifyContent />
+    </Suspense>
+  );
 }

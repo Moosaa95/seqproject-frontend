@@ -265,7 +265,7 @@ export default function EditPropertyPage() {
                           setFormData(prev => ({
                             ...prev,
                             location: selectedLoc.name,
-                            location_id: selectedLoc.id
+                            location_id: selectedLoc.id.toString()
                           }));
                         }
                       }}
